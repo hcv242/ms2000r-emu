@@ -2,7 +2,13 @@
 
 #include <atomic>
 #include <cstdio>
+
+#if defined(_MSC_VER)
 #include <intrin.h>
+#define DSP_RETURN_ADDRESS() _ReturnAddress()
+#else
+#define DSP_RETURN_ADDRESS() __builtin_return_address(0)
+#endif
 
 #include "disasm.h"
 #include "dspconfig.h"
@@ -292,7 +298,7 @@ namespace dsp56k
 				{
 					++s_pr;
 					std::fprintf(stderr, "[TR] execOneEnsureRun RECREATE pc=0x%06X chainTable=%p caller=%p\n",
-						_pc, m_jit.debugCurrentChainEntry(_pc), _ReturnAddress());
+						_pc, m_jit.debugCurrentChainEntry(_pc), DSP_RETURN_ADDRESS());
 				}
 			}
 
