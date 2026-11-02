@@ -3,7 +3,10 @@
 #include <cstdint>
 #include <vector>
 #include <cstdio>
+
+#if defined(_MSC_VER)
 #include <intrin.h>
+#endif
 
 #include "jitasmjithelpers.h"
 #include "jittypes.h"
