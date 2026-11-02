@@ -1,6 +1,8 @@
 #include "jit.h"
 
+#ifdef _WIN32
 #include <intrin.h>
+#endif
 #include <thread>
 #include <functional>
 
