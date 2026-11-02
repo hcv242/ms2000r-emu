@@ -1,1 +1,40 @@
 
+name: Build MS2000R for macOS
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/build-macos.yml'
+
+jobs:
+  build:
+    runs-on: macos-14
+
+    steps:
+      - name: Download source
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install build tools
+        run: brew install cmake ninja
+
+      - name: Compile Apple Silicon VST3
+        run: |
+          cmake -S . -B build_vst.nosync -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DMS2K_BUILD_VST3=ON \
+            -DMS2K_MAC_GUI=OFF \
+            -DCMAKE_OSX_ARCHITECTURES=arm64 \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET=12.0
+
+          cmake --build build_vst.nosync \
+            --target MS2000R_Shim --parallel 3
+
+      - name: Upload plugin
+        uses: actions/upload-artifact@v4
+        with:
+          name: MS2000R-macOS-ARM64
+          path: build_vst.nosync/VST3_multi/MS2000R.vst3
+
